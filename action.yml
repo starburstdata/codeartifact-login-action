@@ -26,10 +26,7 @@ runs:
   steps:
     - shell: bash
       run: |
-        command='aws codeartifact get-authorization-token \
-          --query authorizationToken \
-          --output text \
-          --domain "${{ inputs.domain }}"'
+        command='aws codeartifact get-authorization-token --query authorizationToken --output text --domain "${{ inputs.domain }}"'
         if [[ -n "${{ inputs.owner }}" ]]; then
           command=$command' --domain-owner "${{ inputs.owner }}"'
         fi
