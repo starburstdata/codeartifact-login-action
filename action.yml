@@ -33,7 +33,7 @@ runs:
         if [[ -n "${{ inputs.region }}" ]]; then
           command=$command' --region "${{ inputs.region }}"'
         fi
-        token=$($command)
+        token=$(sh -c "$command")
         echo "::add-mask::$token"
         echo "${{ inputs.user-variable }}=aws" >> "$GITHUB_ENV"
         echo "${{ inputs.password-variable }}=$token" >> "$GITHUB_ENV"
