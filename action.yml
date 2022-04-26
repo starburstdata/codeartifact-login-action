@@ -1,0 +1,42 @@
+name: "codeartifact-login-action"
+description: "Login to CodeArtifact repository"
+inputs:
+  domain:
+    description: "Name of CodeArtifact domain "
+    required: true
+  owner:
+    description: "AWS account of CodeArtifact domain"
+    required: false
+    default: ""
+  region:
+    description: "AWS region to use"
+    required: false
+    default: ""
+  user-variable:
+    description: "Name of output environment variable for user"
+    required: false
+    default: "mavenUser"
+  password-variable:
+    description: "Name of output environment variable for password"
+    required: false
+    default: "mavenCredentials"
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: |
+        command='aws codeartifact get-authorization-token \
+          --query authorizationToken \
+          --output text \
+          --domain "${{ inputs.domain }}"'
+        if [[ -n "${{ inputs.owner }}" ]]; then
+          command=$command' --domain-owner "${{ inputs.owner }}"'
+        fi
+        if [[ -n "${{ inputs.region }}" ]]; then
+          command=$command' --region "${{ inputs.region }}"'
+        fi
+        token=$($c)
+        echo "::add-mask::$token"
+        echo "${{ inputs.user-variable }}=aws" >> "$GITHUB_ENV"
+        echo "${{ inputs.password-variable }}=$token" >> "$GITHUB_ENV"
